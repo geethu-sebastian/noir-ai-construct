@@ -188,24 +188,36 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({ prompt }) => {
           
           <div className="flex items-center gap-2">
             {/* Device Toggle */}
-            <div className="flex items-center bg-white/10 rounded-lg p-1">
+            <div className="flex items-center bg-slate-800/50 rounded-lg p-1 border border-white/10">
               <button
                 onClick={() => setDeviceView('desktop')}
-                className={`p-2 rounded transition-colors ${deviceView === 'desktop' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                className={`p-2 rounded transition-all duration-200 ${
+                  deviceView === 'desktop' 
+                    ? 'bg-white text-slate-800 shadow-lg' 
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
+                }`}
                 title="Desktop View"
               >
                 <Monitor className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setDeviceView('tablet')}
-                className={`p-2 rounded transition-colors ${deviceView === 'tablet' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                className={`p-2 rounded transition-all duration-200 ${
+                  deviceView === 'tablet' 
+                    ? 'bg-white text-slate-800 shadow-lg' 
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
+                }`}
                 title="Tablet View"
               >
                 <Tablet className="w-4 h-4" />
               </button>
               <button
                 onClick={() => setDeviceView('mobile')}
-                className={`p-2 rounded transition-colors ${deviceView === 'mobile' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                className={`p-2 rounded transition-all duration-200 ${
+                  deviceView === 'mobile' 
+                    ? 'bg-white text-slate-800 shadow-lg' 
+                    : 'text-gray-300 hover:text-white hover:bg-white/10'
+                }`}
                 title="Mobile View"
               >
                 <Smartphone className="w-4 h-4" />
