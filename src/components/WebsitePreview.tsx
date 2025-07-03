@@ -1,6 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
-import { Monitor, Smartphone, Code, ExternalLink, Sparkles } from 'lucide-react';
+import { Monitor, Smartphone, Code, ExternalLink, Sparkles, Tablet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface WebsitePreviewProps {
@@ -8,7 +7,7 @@ interface WebsitePreviewProps {
 }
 
 export const WebsitePreview: React.FC<WebsitePreviewProps> = ({ prompt }) => {
-  const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [showCode, setShowCode] = useState(false);
   const [websiteContent, setWebsiteContent] = useState<string>('');
 
@@ -152,9 +151,29 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({ prompt }) => {
     setWebsiteContent(content);
   };
 
-  const containerClass = viewMode === 'mobile' 
-    ? 'w-80 mx-auto border border-gray-300 rounded-lg overflow-hidden'
-    : 'w-full border border-gray-200 rounded-lg overflow-hidden';
+  const getContainerClass = () => {
+    switch (viewMode) {
+      case 'mobile':
+        return 'w-80 mx-auto border border-gray-300 rounded-lg overflow-hidden';
+      case 'tablet':
+        return 'w-[768px] mx-auto border border-gray-300 rounded-lg overflow-hidden';
+      case 'desktop':
+      default:
+        return 'w-full border border-gray-200 rounded-lg overflow-hidden';
+    }
+  };
+
+  const getIframeHeight = () => {
+    switch (viewMode) {
+      case 'mobile':
+        return '600px';
+      case 'tablet':
+        return '800px';
+      case 'desktop':
+      default:
+        return '600px';
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-gray-50">
@@ -168,6 +187,14 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({ prompt }) => {
             className={viewMode === 'desktop' ? 'bg-black text-white' : ''}
           >
             <Monitor className="w-4 h-4" />
+          </Button>
+          <Button
+            variant={viewMode === 'tablet' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setViewMode('tablet')}
+            className={viewMode === 'tablet' ? 'bg-black text-white' : ''}
+          >
+            <Tablet className="w-4 h-4" />
           </Button>
           <Button
             variant={viewMode === 'mobile' ? 'default' : 'outline'}
@@ -199,13 +226,13 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({ prompt }) => {
             <pre>{websiteContent || '// Your generated website code will appear here...'}</pre>
           </div>
         ) : (
-          <div className={containerClass}>
+          <div className={getContainerClass()}>
             <div className="bg-white">
               {websiteContent ? (
                 <iframe
                   srcDoc={websiteContent}
-                  className="w-full h-96 md:h-[600px]"
-                  style={{ height: viewMode === 'mobile' ? '600px' : '600px' }}
+                  className="w-full"
+                  style={{ height: getIframeHeight() }}
                 />
               ) : (
                 <div className="flex items-center justify-center h-96 bg-gray-100">
