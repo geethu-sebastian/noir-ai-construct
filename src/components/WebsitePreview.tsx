@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Monitor, Smartphone, Code, ExternalLink } from 'lucide-react';
+import { Monitor, Smartphone, Code, ExternalLink, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface WebsitePreviewProps {
