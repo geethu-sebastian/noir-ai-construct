@@ -16,13 +16,13 @@ const Index = () => {
       <Header />
       
       <div className="flex-1 flex overflow-hidden">
-        {/* Chat Panel */}
-        <div className="w-1/2 flex flex-col">
+        {/* Chat Panel - 2/5 width */}
+        <div className="w-2/5 flex flex-col">
           <ChatInterface onWebsiteGenerate={handleWebsiteGenerate} />
         </div>
         
-        {/* Preview Panel */}
-        <div className="w-1/2 flex flex-col">
+        {/* Preview Panel - 3/5 width */}
+        <div className="w-3/5 flex flex-col">
           <WebsitePreview prompt={currentPrompt} />
         </div>
       </div>
