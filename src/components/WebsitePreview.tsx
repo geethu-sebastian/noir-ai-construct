@@ -1,19 +1,22 @@
+
 import React, { useState, useEffect } from 'react';
-import { Monitor, Smartphone, Code, ExternalLink, Sparkles, Tablet } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Monitor, Smartphone, Tablet, RefreshCw, ExternalLink, Code, Sparkles } from 'lucide-react';
 
 interface WebsitePreviewProps {
   prompt: string;
 }
 
 export const WebsitePreview: React.FC<WebsitePreviewProps> = ({ prompt }) => {
-  const [viewMode, setViewMode] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [deviceView, setDeviceView] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [showCode, setShowCode] = useState(false);
   const [websiteContent, setWebsiteContent] = useState<string>('');
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
   useEffect(() => {
     if (prompt) {
       generateWebsiteContent(prompt);
+      setLastUpdated(new Date().toLocaleTimeString());
     }
   }, [prompt]);
 
@@ -151,100 +154,134 @@ export const WebsitePreview: React.FC<WebsitePreviewProps> = ({ prompt }) => {
     setWebsiteContent(content);
   };
 
-  const getContainerClass = () => {
-    switch (viewMode) {
-      case 'mobile':
-        return 'w-80 mx-auto border border-gray-300 rounded-lg overflow-hidden';
-      case 'tablet':
-        return 'w-[768px] mx-auto border border-gray-300 rounded-lg overflow-hidden';
-      case 'desktop':
-      default:
-        return 'w-full border border-gray-200 rounded-lg overflow-hidden';
-    }
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    setTimeout(() => {
+      setIsRefreshing(false);
+      setLastUpdated(new Date().toLocaleTimeString());
+    }, 500);
   };
 
-  const getIframeHeight = () => {
-    switch (viewMode) {
+  const getPreviewStyles = () => {
+    switch (deviceView) {
       case 'mobile':
-        return '600px';
+        return 'w-[375px] h-[667px]';
       case 'tablet':
-        return '800px';
-      case 'desktop':
+        return 'w-[768px] h-[600px]';
       default:
-        return '600px';
+        return 'w-full h-full';
     }
   };
 
   return (
-    <div className="flex flex-col h-full bg-gray-50">
-      <div className="p-4 bg-white border-b border-gray-200 flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-gray-900">Website Preview</h3>
-        <div className="flex gap-2">
-          <Button
-            variant={viewMode === 'desktop' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('desktop')}
-            className={viewMode === 'desktop' ? 'bg-black text-white' : ''}
-          >
-            <Monitor className="w-4 h-4" />
-          </Button>
-          <Button
-            variant={viewMode === 'tablet' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('tablet')}
-            className={viewMode === 'tablet' ? 'bg-black text-white' : ''}
-          >
-            <Tablet className="w-4 h-4" />
-          </Button>
-          <Button
-            variant={viewMode === 'mobile' ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setViewMode('mobile')}
-            className={viewMode === 'mobile' ? 'bg-black text-white' : ''}
-          >
-            <Smartphone className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowCode(!showCode)}
-          >
-            <Code className="w-4 h-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-          >
-            <ExternalLink className="w-4 h-4" />
-          </Button>
+    <div className="h-full flex flex-col bg-gradient-to-b from-slate-800/30 to-slate-900/30 backdrop-blur-sm">
+      {/* Header */}
+      <div className="p-4 border-b border-white/10 bg-white/5 backdrop-blur-sm">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <h3 className="text-lg font-semibold text-white">Live Preview</h3>
+            <div className="flex items-center gap-1 bg-green-500/20 text-green-400 px-2 py-1 rounded-full text-xs">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              Live
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Device Toggle */}
+            <div className="flex items-center bg-white/10 rounded-lg p-1">
+              <button
+                onClick={() => setDeviceView('desktop')}
+                className={`p-2 rounded transition-colors ${deviceView === 'desktop' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                title="Desktop View"
+              >
+                <Monitor className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setDeviceView('tablet')}
+                className={`p-2 rounded transition-colors ${deviceView === 'tablet' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                title="Tablet View"
+              >
+                <Tablet className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setDeviceView('mobile')}
+                className={`p-2 rounded transition-colors ${deviceView === 'mobile' ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+                title="Mobile View"
+              >
+                <Smartphone className="w-4 h-4" />
+              </button>
+            </div>
+            
+            {/* Code Toggle */}
+            <button
+              onClick={() => setShowCode(!showCode)}
+              className={`p-2 rounded transition-colors ${showCode ? 'bg-white/20 text-white' : 'text-gray-400 hover:text-white'}`}
+              title="Toggle Code View"
+            >
+              <Code className="w-4 h-4" />
+            </button>
+            
+            {/* Refresh Button */}
+            <button
+              onClick={handleRefresh}
+              className="p-2 text-gray-400 hover:text-white transition-colors"
+              title="Refresh Preview"
+            >
+              <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </button>
+            
+            {/* External Link */}
+            <button
+              className="p-2 text-gray-400 hover:text-white transition-colors"
+              title="Open in New Tab"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 p-4 overflow-auto">
+      {/* Preview Area */}
+      <div className="flex-1 p-4 flex items-center justify-center overflow-auto">
         {showCode ? (
-          <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-auto">
-            <pre>{websiteContent || '// Your generated website code will appear here...'}</pre>
+          <div className="w-full h-full bg-gray-900/80 backdrop-blur-sm text-green-400 p-4 rounded-lg font-mono text-sm overflow-auto border border-white/10">
+            <pre className="whitespace-pre-wrap">{websiteContent || '// Your generated website code will appear here...'}</pre>
           </div>
         ) : (
-          <div className={getContainerClass()}>
-            <div className="bg-white">
-              {websiteContent ? (
-                <iframe
-                  srcDoc={websiteContent}
-                  className="w-full"
-                  style={{ height: getIframeHeight() }}
-                />
-              ) : (
-                <div className="flex items-center justify-center h-96 bg-gray-100">
-                  <div className="text-center">
-                    <Sparkles className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Start chatting to generate your website!</p>
-                  </div>
+          <div className={`${getPreviewStyles()} transition-all duration-300 ${deviceView !== 'desktop' ? 'border border-white/20 rounded-lg overflow-hidden shadow-2xl' : ''}`}>
+            {websiteContent ? (
+              <iframe
+                srcDoc={websiteContent}
+                className="w-full h-full border-0 bg-white rounded-lg"
+                sandbox="allow-scripts allow-same-origin"
+                title="Website Preview"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg">
+                <div className="text-center">
+                  <Sparkles className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-400">Start chatting to generate your website!</p>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         )}
+      </div>
+
+      {/* Status Bar */}
+      <div className="p-3 border-t border-white/10 bg-white/5 backdrop-blur-sm">
+        <div className="flex items-center justify-between text-xs text-gray-400">
+          <div className="flex items-center gap-4">
+            <span>Ready</span>
+            <span>•</span>
+            <span className="capitalize">{deviceView} View</span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>Auto-refresh: On</span>
+            <span>•</span>
+            <span>Last updated: {lastUpdated || new Date().toLocaleTimeString()}</span>
+          </div>
+        </div>
       </div>
     </div>
   );
